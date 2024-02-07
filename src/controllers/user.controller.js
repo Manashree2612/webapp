@@ -18,6 +18,17 @@ const createUser = async (req, res, next) => {
             return res.status(400).json({ error: 'Bad Request', message: `Missing fields: ${missingFields.join(', ')}` });
         }
 
+        if (typeof userDetails.first_name !== 'string' || typeof userDetails.last_name !== 'string') {
+            return res.status(400).json({ error: 'Bad Request', message: 'First name and last name must be strings' });
+        }
+
+
+        // Check if username is not an email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(userDetails.username)) {
+            return res.status(400).json({ error: 'Bad Request', message: 'Username must be a valid email address' });
+        }
+
         //Check if a user with same username exists or not
         const existingUser = await db.User.findOne({ where: { username: userDetails.username } })
         if (existingUser === null) {
@@ -75,7 +86,7 @@ const updateUser = async (req, res, next) => {
 
         const updatedFields = req.body;
         if (Object.keys(updatedFields).length === 0) {
-            return res.status(400).json({ error: 'Bad Request', message: 'No fields provided for update' });
+            return res.status(204).json({ error: 'No Content', message: 'No fields provided for update' });
         }
 
         for (field in updatedFields) {
@@ -89,12 +100,19 @@ const updateUser = async (req, res, next) => {
             return res.status(404).json({ error: 'Data not found' });
         }
 
+        userDetails.account_updated = new Date()
+
         await userDetails.update(updatedFields);
         await userDetails.save();
 
-        // Remove the password field from updatedData if present
-        delete userDetails.password;
-        return res.status(200).json(userDetails);
+        const updatedData = {
+            id: userDetails.id,
+            first_name: userDetails.first_name,
+            last_name: userDetails.last_name,
+            account_created: userDetails.account_created,
+            account_updated: userDetails.account_updated
+        }
+        return res.status(200).json(updatedData);
 
     } catch (error) {
         console.log(error, 'Error while updating user details');
