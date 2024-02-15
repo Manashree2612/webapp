@@ -31,12 +31,6 @@ jobs:
       with:
         database: ${{vars.DEV_DATABASE}}
  
-    - name: Setup DB User
-      run: |
-        sudo mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${{vars.DEV_PASSWORD}}';"
-        sudo mysql -D ${{vars.DEV_DATABASE}} -e "GRANT ALL PRIVILEGES ON ${{vars.DEV_DATABASE}}.* TO 'root'@localhost;"
-        sudo mysql -D ${{vars.DEV_DATABASE}} -e "FLUSH PRIVILEGES;"
- 
     - name: Install dependencies
       run: npm install
  
