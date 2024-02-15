@@ -18,6 +18,14 @@ const createUser = async (req, res, next) => {
             return res.status(400).json({ error: 'Bad Request', message: `Missing fields: ${missingFields.join(', ')}` });
         }
 
+
+        // Check if any field is blank
+        const blankFields = requiredFields.filter(field => userDetails[field].trim() === '');
+
+        if (blankFields.length > 0) {
+            return res.status(400).json({ error: 'Bad Request', message: `Fields cannot be left blank: ${blankFields.join(', ')}` });
+        }
+
         if (typeof userDetails.first_name !== 'string' || typeof userDetails.last_name !== 'string') {
             return res.status(400).json({ error: 'Bad Request', message: 'First name and last name must be strings' });
         }
@@ -27,6 +35,11 @@ const createUser = async (req, res, next) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(userDetails.username)) {
             return res.status(400).json({ error: 'Bad Request', message: 'Username must be a valid email address' });
+        }
+
+        // Check if password is empty
+        if (!userDetails.password.trim()) {
+            return res.status(400).json({ error: 'Bad Request', message: 'Password cannot be empty' });
         }
 
         //Check if a user with same username exists or not
@@ -83,10 +96,15 @@ const updateUser = async (req, res, next) => {
             return res.status(400).json();
         }
 
-
         const updatedFields = req.body;
         if (Object.keys(updatedFields).length === 0) {
             return res.status(204).json({ error: 'No Content', message: 'No fields provided for update' });
+        }
+
+        // Check if any field is blank
+        const blankFields = Object.keys(updatedFields).filter(field => updatedFields[field].trim() === '');
+        if (blankFields.length > 0) {
+            return res.status(400).json({ error: 'Bad Request', message: `Fields cannot be left blank: ${blankFields.join(', ')}` });
         }
 
         for (field in updatedFields) {
