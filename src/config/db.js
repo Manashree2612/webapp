@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-console.log('PROCESS', process.env.PORT);
 module.exports = 
 {
   "development": {

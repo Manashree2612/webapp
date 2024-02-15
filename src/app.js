@@ -1,6 +1,4 @@
 const express = require('express');
-require('dotenv').config();
-const db = require('./models/index');
 const router = require('./routes/index');
 const { testDbConnection, syncDatabase } = require('./controllers/healthz.controller.js');
 
