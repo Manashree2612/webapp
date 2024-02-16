@@ -14,7 +14,6 @@ jobs:
       DB_DATABASE: ${{ vars.DEV_DATABASE }}
       DB_USERNAME: ${{ vars.DEV_USERNAME }}
       DB_PASSWORD: ${{ vars.DEV_PASSWORD }}
-      DB_USER: ${{ vars.DB_USER }}
 
     steps:
       - name: Checkout Repository
@@ -46,7 +45,7 @@ jobs:
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USERNAME }} -p${{ env.DB_PASSWORD }}
       # - name: Set up MySQL
       #   uses: ankane/setup-mariadb@v1
       #   with:
