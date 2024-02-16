@@ -121,6 +121,12 @@ const updateUser = async (req, res, next) => {
             return res.status(400).json({ error: 'Bad Request', message: `Fields cannot be left blank: ${blankUpdatedFields.join(', ')}` });
         }
 
+        // Check if any field is blank
+        const blankFields = Object.keys(updatedFields).filter(field => updatedFields[field].trim() === '');
+        if (blankFields.length > 0) {
+            return res.status(400).json({ error: 'Bad Request', message: `Fields cannot be left blank: ${blankFields.join(', ')}` });
+        }
+
         for (field in updatedFields) {
             if (field !== 'first_name' && field !== 'last_name' && field !== 'password') {
                 return res.status(400).json({ error: 'Bad Request', message: `Attempted to update unathorized field: ${field}` });
