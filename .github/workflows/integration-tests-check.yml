@@ -12,7 +12,7 @@ jobs:
 
     env:
       DB_DATABASE: ${{ vars.DEV_DATABASE }}
-      DB_USERNAME: ${{ vars.DEV_USERNAME }}
+      DB_USER: ${{ vars.DEV_USERNAME }}
       DB_PASSWORD: ${{ vars.DEV_PASSWORD }}
 
     steps:
@@ -42,10 +42,10 @@ jobs:
             echo ".env file does not exist"
             exit 1
           fi
-      - name: Set up MySQL
+      - name: Start MySQL
         run: |
           sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USERNAME }} -p${{ env.DB_PASSWORD }}
+          mysql -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE;" -u$DB_USER -p$DB_PASSWORD
       # - name: Set up MySQL
       #   uses: ankane/setup-mariadb@v1
       #   with:
