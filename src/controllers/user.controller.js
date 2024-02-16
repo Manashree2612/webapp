@@ -65,13 +65,22 @@ const createUser = async (req, res, next) => {
         }
 
     } catch (error) {
-        console.log(error, 'Error while creating a user');
-        res.status(500).json({ error: 'Internal server error' });
+        if (error.name === 'SequelizeValidationError') {
+            return res.status(400).json({ error: 'Validation error', details: error.errors });
+        } else if (error.name === 'PermissionError') {
+            return res.status(403).json({ error: 'Permission denied' });
+        }
+        console.error('An error occurred:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 
 const fetchUser = async (req, res, next) => {
     try {
+        const hasQueryParams = req.query && Object.keys(req.query).length > 0;
+        if (hasQueryParams) {
+            return res.status(400).json();
+        }
         const authUserId = req.user;
         const userDetails = await db.User.findOne({ where: { id: authUserId } });
         return res.status(200).json({
@@ -84,8 +93,13 @@ const fetchUser = async (req, res, next) => {
         });
 
     } catch (error) {
-        console.log(error, 'Error while fetching user details', error);
-        res.status(500).json({ error: 'Internal server error' });
+        if (error.name === 'SequelizeValidationError') {
+            return res.status(400).json({ error: 'Validation error', details: error.errors });
+        } else if (error.name === 'PermissionError') {
+            return res.status(403).json({ error: 'Permission denied' });
+        }
+        console.error('An error occurred:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 
@@ -98,7 +112,7 @@ const updateUser = async (req, res, next) => {
 
         const updatedFields = req.body;
         if (Object.keys(updatedFields).length === 0) {
-            return res.status(204).json({ error: 'No Content', message: 'No fields provided for update' });
+            return res.status(400).json({ error: 'No Content', message: 'No fields provided for update' });
         }
 
         // Check if any field is blank
@@ -130,11 +144,16 @@ const updateUser = async (req, res, next) => {
             account_created: userDetails.account_created,
             account_updated: userDetails.account_updated
         }
-        return res.status(200).json(updatedData);
+        return res.status(204).json();
 
     } catch (error) {
-        console.log(error, 'Error while updating user details');
-        res.status(500).json({ error: 'Internal server error' });
+        if (error.name === 'SequelizeValidationError') {
+            return res.status(400).json({ error: 'Validation error', details: error.errors });
+        } else if (error.name === 'PermissionError') {
+            return res.status(403).json({ error: 'Permission denied' });
+        }
+        console.error('An error occurred:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 
