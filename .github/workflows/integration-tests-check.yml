@@ -38,9 +38,14 @@ jobs:
         sudo mysql -D ${{vars.DEV_DATABASE}} -e "CREATE USER 'mana'@localhost IDENTIFIED BY '${{vars.DEV_PASSWORD}}';"
         sudo mysql -D ${{vars.DEV_DATABASE}} -e "GRANT ALL PRIVILEGES ON ${{vars.DEV_DATABASE}}.* TO 'mana'@localhost;"
         sudo mysql -D ${{vars.DEV_DATABASE}} -e "FLUSH PRIVILEGES;"
+        npm test
 
     - name: Install dependencies
       run: npm install
+
+    - name: Verify DB User
+      run: |
+        sudo mysql -D "${{ vars.DEV_DATABASE }}" -e "SELECT user FROM mysql.user WHERE user = 'mana';"
 
     - name: Run integration tests
       run: npm test
