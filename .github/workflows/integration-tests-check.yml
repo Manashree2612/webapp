@@ -42,10 +42,11 @@ jobs:
             echo ".env file does not exist"
             exit 1
           fi
-      - name: Start MySQL
+      - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
-          mysql -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE;" -u$DB_USER -p$DB_PASSWORD
+          sudo mysql -e "UPDATE mysql.user SET password=PASSWORD('root') WHERE User='root'; FLUSH PRIVILEGES; CREATE DATABASE IF NOT EXISTS \`${{ env.DB_DATABASE }}\`;" -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}"
+
       # - name: Set up MySQL
       #   uses: ankane/setup-mariadb@v1
       #   with:
