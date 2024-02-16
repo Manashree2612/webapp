@@ -45,8 +45,7 @@ jobs:
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
-          mysql -e "CREATE USER 'mana'@'localhost' IDENTIFIED BY 'cloud2812'; CREATE DATABASE IF NOT EXISTS \`${{ env.DEV_DATABASE }}\`; GRANT ALL PRIVILEGES ON \`${{ env.DEV_DATABASE }}\`.* TO 'mana'@'localhost';" -u root -p"${{ env.DEV_PASSWORD }}"
-
+          mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'cloud2812';"
 
       # - name: Set up MySQL
       #   uses: ankane/setup-mariadb@v1
