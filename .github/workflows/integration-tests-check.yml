@@ -14,6 +14,7 @@ jobs:
       DB_DATABASE: ${{ vars.DEV_DATABASE }}
       DB_USERNAME: ${{ vars.DEV_USERNAME }}
       DB_PASSWORD: ${{ vars.DEV_PASSWORD }}
+      DB_USER: ${{ vars.DB_USER }}
 
     steps:
       - name: Checkout Repository
