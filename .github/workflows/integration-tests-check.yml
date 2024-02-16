@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DB_DATABASE: ${{ vars.DEV_DATABASE }}
-      DB_USER: ${{ vars.DEV_USERNAME }}
-      DB_PASSWORD: ${{ vars.DEV_PASSWORD }}
+      DEV_DATABASE: ${{ vars.DEV_DATABASE }}
+      DEV_USERNAME: ${{ vars.DEV_USERNAME }}
+      DEV_PASSWORD: ${{ vars.DEV_PASSWORD }}
 
     steps:
       - name: Checkout Repository
@@ -29,7 +29,7 @@ jobs:
           touch .env
           echo "DEV_DATABASE=${{vars.DEV_DATABASE}}" >> .env
           echo "DEV_PASSWORD=${{vars.DEV_PASSWORD}}" >> .env
-          echo "DEV_USER=root" >> .env
+          echo "DEV_USER=mana" >> .env
           echo "DEV_HOST=127.0.0.1" >> .env
           echo "DEV_DIALECT=mysql" >> .env
 
@@ -45,7 +45,8 @@ jobs:
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
-          sudo mysql -e "UPDATE mysql.user SET password=PASSWORD('root') WHERE User='root'; FLUSH PRIVILEGES; CREATE DATABASE IF NOT EXISTS \`${{ env.DB_DATABASE }}\`;" -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}"
+          mysql -e "CREATE USER 'mana'@'localhost' IDENTIFIED BY 'cloud2812'; CREATE DATABASE IF NOT EXISTS \`${{ env.DEV_DATABASE }}\`; GRANT ALL PRIVILEGES ON \`${{ env.DEV_DATABASE }}\`.* TO 'mana'@'localhost';" -u root -p"${{ env.DEV_PASSWORD }}"
+
 
       # - name: Set up MySQL
       #   uses: ankane/setup-mariadb@v1
