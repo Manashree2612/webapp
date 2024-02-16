@@ -116,9 +116,9 @@ const updateUser = async (req, res, next) => {
         }
 
         // Check if any field is blank
-        const blankFields = Object.keys(updatedFields).filter(field => updatedFields[field].trim() === '');
-        if (blankFields.length > 0) {
-            return res.status(400).json({ error: 'Bad Request', message: `Fields cannot be left blank: ${blankFields.join(', ')}` });
+        const blankUpdatedFields = Object.keys(updatedFields).filter(field => updatedFields[field].trim() === '');
+        if (blankUpdatedFields.length > 0) {
+            return res.status(400).json({ error: 'Bad Request', message: `Fields cannot be left blank: ${blankUpdatedFields.join(', ')}` });
         }
 
         for (field in updatedFields) {
