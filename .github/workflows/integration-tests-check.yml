@@ -47,4 +47,6 @@ jobs:
         sudo mysql -D "${{ vars.DEV_DATABASE }}" -e "SELECT user FROM mysql.user WHERE user = 'mana';"
 
     - name: Run integration tests
-      run: npm test
+      run: |
+        sudo mysql -D "${{ vars.DEV_DATABASE }}" -e "SELECT user FROM mysql.user WHERE user = 'mana';"
+        npm test
