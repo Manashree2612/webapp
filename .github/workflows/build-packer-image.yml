@@ -28,7 +28,7 @@ jobs:
 
       - name: Build zip
         working-directory: ${{ github.workspace }}
-        run: zip -r webapp1.zip .
+        run: zip -r webapp.zip .
             
       - name: Set up Google Cloud SDK
         uses: google-github-actions/auth@v2
