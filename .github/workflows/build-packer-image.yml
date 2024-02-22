@@ -16,30 +16,23 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env:
-      DATABASE: ${{ secrets.DATABASE }}
-      USER: ${{ secrets.USER }}
-      PASSWORD: ${{ secrets.PASSWORD }}
-      HOST: ${{ secrets.HOST }}
-
     steps:
       - name: checkout
         uses: actions/checkout@v3
 
       - name: Setup Environment Variables
         run: |
-          touch .env
-          echo "DEV_DATABASE=${{vars.DEV_DATABASE}}" >> .env
-          echo "DEV_PASSWORD=${{vars.DEV_PASSWORD}}" >> .env
-          echo "DEV_USERNAME=${{ vars.DEV_USERNAME}}" >> .env
-          echo "DEV_HOST=127.0.0.1" >> .env
-          echo "DEV_DIALECT=mysql" >> .env
+          echo "DEV_DATABASE=${DEV_DATABASE}" >> $GITHUB_WORKSPACE/.env
+          echo "DEV_PASSWORD=${DEV_PASSWORD}" >> $GITHUB_WORKSPACE/.env
+          echo "DEV_USERNAME=${DEV_USERNAME}" >> $GITHUB_WORKSPACE/.env
+          echo "DEV_HOST=127.0.0.1" >> $GITHUB_WORKSPACE/.env
+          echo "DEV_DIALECT=mysql" >> $GITHUB_WORKSPACE/.env
 
       - name: Check .env file
         run: |
-          if [ -f .env ]; then
+          if [ -f "$GITHUB_WORKSPACE/.env" ]; then
             echo ".env file exists"
-            cat .env
+            cat $GITHUB_WORKSPACE/.env
           else
             echo ".env file does not exist"
             exit 1
