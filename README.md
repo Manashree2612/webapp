@@ -18,6 +18,7 @@ Users can update their account information, including:
 - First Name
 - Last Name
 - Password
+  
 
 Attempting to update any other field results in a 400 Bad Request HTTP response code. Upon successful update, the `account_updated` field for the user is updated. Users can only update their own account information.
 
