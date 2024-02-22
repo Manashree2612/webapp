@@ -1,0 +1,21 @@
+[Unit]
+Description=CSYE 6225 webapp service
+ConditionPathExists=/opt/csye6225
+After=cloud-final.target
+
+[Service]
+Type=simple
+User=csye6225
+Group=csye6225
+WorkingDirectory=/opt/csye6225/
+ExecStartPre=/bin/echo "Before starting"
+ExecStart=/usr/bin/node /opt/csye6225/server.js
+ExecStartPost=/bin/echo "After starting"
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=csye6225
+
+[Install]
+WantedBy=multi-user.target
