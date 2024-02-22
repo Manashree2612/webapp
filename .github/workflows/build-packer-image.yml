@@ -1,0 +1,44 @@
+name: build-packer
+env:
+  DEV_DATABASE: ${{ vars.DEV_DATABASE }}
+  DEV_USERNAME: ${{ vars.DEV_USERNAME}}
+  DEV_PASSWORD: ${{ vars.DEV_PASSWORD }}
+  GOOGLE_APPLICATION_CREDENTIALS: ${{ vars.GOOGLE_APPLICATION_CREDENTIALS}}
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  build:
+    name: ami_build
+
+    runs-on: ubuntu-latest
+
+    env:
+      DATABASE: ${{ secrets.DATABASE }}
+      USER: ${{ secrets.USER }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+      HOST: ${{ secrets.HOST }}
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Build zip
+        working-directory: ${{ github.workspace }}
+        run: zip -r webapp1.zip .
+            
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}'
+
+      - name: Run packer
+        run: | 
+              cd packer/
+              packer init centos_packer.pkr.hcl
+              packer fmt centos_packer.pkr.hcl
+              packer validate centos_packer.pkr.hcl
+              packer build centos_packer.pkr.hcl
