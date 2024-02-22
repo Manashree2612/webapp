@@ -6,10 +6,10 @@ echo "================================================================="
 sudo groupadd csye6225
 sudo useradd --shell /usr/sbin/nologin -M -g csye6225 csye6225
 
-# echo "================================================================="
-# echo "Updating packages"
-# echo "================================================================="
-# sudo yum update -y
+echo "================================================================="
+echo "Updating packages"
+echo "================================================================="
+sudo yum update -y
 
 echo "================================================================="
 echo "Installing zip packages"
@@ -20,8 +20,12 @@ sudo yum install zip unzip -y
 echo "================================================================="
 echo "Installing MySQL"
 echo "================================================================="
-sudo yum install mariadb-server -y
-sudo systemctl start mariadb
+# sudo yum install mariadb-server -y
+# sudo systemctl start mariadb
+sudo dnf install mysql-server -y
+sudo systemctl start mysqld.service
+sudo systemctl status mysqld
+sudo systemctl enable mysqld
 sudo mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'cloud2812';FLUSH PRIVILEGES;CREATE DATABASE cloud;"
 
 
