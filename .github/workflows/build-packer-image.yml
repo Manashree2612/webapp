@@ -26,6 +26,25 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
 
+      - name: Setup Environment Variables
+        run: |
+          touch .env
+          echo "DEV_DATABASE=${{vars.DEV_DATABASE}}" >> .env
+          echo "DEV_PASSWORD=${{vars.DEV_PASSWORD}}" >> .env
+          echo "DEV_USERNAME=${{ vars.DEV_USERNAME}}" >> .env
+          echo "DEV_HOST=127.0.0.1" >> .env
+          echo "DEV_DIALECT=mysql" >> .env
+
+      - name: Check .env file
+        run: |
+          if [ -f .env ]; then
+            echo ".env file exists"
+            cat .env
+          else
+            echo ".env file does not exist"
+            exit 1
+          fi
+
       - name: Build zip
         working-directory: ${{ github.workspace }}
         run: zip -r webapp.zip .
