@@ -7,13 +7,38 @@ packer {
   }
 }
 
+variable "project_id" {
+  description = "The Google Cloud project ID"
+}
+
+variable "source_image_family" {
+  description = "The family name of the source image used for building the instance"
+}
+
+variable "zone" {
+  description = "The zone in which to build the instance"
+}
+
+variable "ssh_username" {
+  description = "The username used for SSH authentication"
+}
+
+variable "machine_type" {
+  description = "The machine type for the instance"
+}
+
+variable "image_name" {
+  description = "The name of the resulting image"
+}
+
+
 source "googlecompute" "centos_stream8_image" {
-  project_id          = "cloud-project-413915"
-  source_image_family = "centos-stream-8"
-  zone                = "us-east1-b"
-  ssh_username        = "packer"
-  machine_type        = "e2-standard-16"
-  image_name          ="centos-image"
+  project_id          = "${var.project_id}"
+  source_image_family = "${var.source_image_family}"
+  zone                = "${var.zone}"
+  ssh_username        = "${var.ssh_username}"
+  machine_type        = "${var.machine_type}"
+  image_name          = "${var.image_name}"
 }
 
 build {
