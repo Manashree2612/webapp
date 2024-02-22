@@ -41,4 +41,4 @@ jobs:
               packer init centos_packer.pkr.hcl
               packer fmt centos_packer.pkr.hcl
               packer validate centos_packer.pkr.hcl
-              packer build centos_packer.pkr.hcl
+              packer build -var-file="variables.pkrvars.hcl" ./packer/centos_packer.pkr.hcl
