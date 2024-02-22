@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    name: ami_build
+    name: build-packer
 
     runs-on: ubuntu-latest
 
@@ -41,4 +41,4 @@ jobs:
               packer init centos_packer.pkr.hcl
               packer fmt centos_packer.pkr.hcl
               packer validate centos_packer.pkr.hcl
-              packer build -var-file="variables.pkrvars.hcl" ./packer/centos_packer.pkr.hcl
+              packer build -var-file="variables.pkrvars.hcl" centos_packer.pkr.hcl
