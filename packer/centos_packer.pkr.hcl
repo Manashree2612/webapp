@@ -8,12 +8,12 @@ packer {
 }
 
 source "googlecompute" "centos_stream8_image" {
-  project_id          = var.project_id
-  source_image_family = var.source_image_family
-  zone                = var.zone
-  ssh_username        = var.ssh_username
-  machine_type        = var.machine_type
-  image_name          = var.image_name
+  project_id          = "cloud-project-413915"
+  source_image_family = "centos-stream-8"
+  zone                = "us-east1-b"
+  ssh_username        = "packer"
+  machine_type        = "e2-standard-16"
+  image_name          ="centos-image"
 }
 
 build {
