@@ -66,6 +66,8 @@ sudo mv /opt/csye6225/cloud.service /etc/systemd/system/cloud.service
 
 # Enable and start the systemd service
 sudo systemctl daemon-reload
+sudo systemctl enable mariadb
+sudo systemctl start mariadb
 sudo systemctl enable cloud.service
 sudo systemctl start cloud.service
 
