@@ -22,10 +22,9 @@ echo "Installing MySQL"
 echo "================================================================="
 # sudo yum install mariadb-server -y
 # sudo systemctl start mariadb
-sudo dnf install mysql-server -y
-sudo systemctl start mysqld.service
-sudo systemctl status mysqld
-sudo systemctl enable mysqld
+sudo dnf install mariadb-server -y
+sudo systemctl start mariadb
+sudo systemctl status mariadb
 sudo mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'cloud2812';FLUSH PRIVILEGES;CREATE DATABASE cloud;"
 
 
