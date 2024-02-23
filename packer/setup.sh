@@ -1,5 +1,5 @@
 #!/bin/bash
-
+export MYSQL_ROOT_PASSWORD="cloud2812"
 echo "================================================================="
 echo "Adding user and group"
 echo "================================================================="
@@ -25,8 +25,17 @@ echo "================================================================="
 sudo dnf install mariadb-server -y
 sudo systemctl start mariadb
 sudo systemctl status mariadb
-sudo mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'cloud2812';FLUSH PRIVILEGES;CREATE DATABASE cloud;"
+mysql_secure_installation <<EOF
 
+y
+${MYSQL_ROOT_PASSWORD}
+${MYSQL_ROOT_PASSWORD}
+y
+y
+y
+y
+EOF
+sudo mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "CREATE DATABASE cloud;"
 
 echo "================================================================="
 echo "Installing Node and npm"
