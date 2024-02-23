@@ -29,7 +29,7 @@ jobs:
           touch .env
           echo "DEV_DATABASE=${{vars.DEV_DATABASE}}" >> .env
           echo "DEV_PASSWORD=${{vars.DEV_PASSWORD}}" >> .env
-          echo "DEV_USERNAME=${{ vars.DEV_USERNAME}}" >> .env
+          echo "DEV_USERNAME=mana" >> .env
           echo "DEV_HOST=127.0.0.1" >> .env
           echo "DEV_DIALECT=mysql" >> .env
 
