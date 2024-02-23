@@ -50,7 +50,7 @@ jobs:
 
       - name: Setup DB User
         run: |
-          sudo mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'cloud2812';FLUSH PRIVILEGES;CREATE DATABASE cloud;"
+          sudo mysql -uroot -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'cloud2812';FLUSH PRIVILEGES;"
 
           sudo mysql -D ${{vars.DEV_DATABASE}} -e "GRANT ALL PRIVILEGES ON ${{vars.DEV_DATABASE}}.* TO 'root'@localhost;"
           sudo mysql -D ${{vars.DEV_DATABASE}} -e "FLUSH PRIVILEGES;"
