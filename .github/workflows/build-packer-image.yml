@@ -9,7 +9,7 @@ env:
   DEV_HOST: ${{vars.DEV_HOST}}
 
 on:
-  pull_request:
+  push:
     branches: 
       - main
 
