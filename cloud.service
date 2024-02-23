@@ -2,10 +2,8 @@
 Description=CSYE 6225 webapp service
 ConditionPathExists=/opt/csye6225
 After=network-online.target
-Wants=mysql.service
 
 [Service]
-EnvironmentFile=/opt/csye6225/.env
 Type=simple
 User=csye6225
 Group=csye6225
