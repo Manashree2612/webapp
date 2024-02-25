@@ -8,7 +8,9 @@ on:
   pull_request:
     branches:
       - main
-
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -56,10 +58,6 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
-      # - name: Verify DB User
-      #   run: |
-      #     sudo mysql -D "${{ vars.DEV_DATABASE }}" -e "SELECT user FROM mysql.user WHERE user = 'root';"
 
       - name: Run integration tests
         run: |
