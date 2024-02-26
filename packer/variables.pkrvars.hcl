@@ -1,4 +1,4 @@
-project_id          = "cloud-project-413915"
+project_id          = "clouddev-415518"
 source_image_family = "centos-stream-8"
 zone                = "us-east1-b"
 ssh_username        = "packer"
