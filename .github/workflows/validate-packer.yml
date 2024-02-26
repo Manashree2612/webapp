@@ -1,4 +1,4 @@
-name: build-packer
+name: validate-packer
 env:
   DEV_DATABASE: ${{ vars.DEV_DATABASE }}
   DEV_USERNAME: ${{ vars.DEV_USERNAME}}
@@ -15,7 +15,7 @@ on:
 
 jobs:
   build:
-    name: build-packer
+    name: validate-packer
 
     runs-on: ubuntu-latest
 
@@ -51,9 +51,15 @@ jobs:
         with:
           credentials_json: '${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}'
 
-      - name: Run packer
+      - name: Packer fmt
         run: | 
               cd packer/
               packer init centos_packer.pkr.hcl
-              packer fmt centos_packer.pkr.hcl -check
-              packer validate -var-file="variables.pkrvars.hcl" centos_packer.pkr.hcl -check
+              packer fmt -check centos_packer.pkr.hcl
+      
+      - name: Packer validate
+        run: | 
+              cd packer/
+              packer init centos_packer.pkr.hcl
+              packer fmt -check centos_packer.pkr.hcl
+              packer validate -var-file="variables.pkrvars.hcl" centos_packer.pkr.hcl
