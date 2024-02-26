@@ -38,7 +38,7 @@ source "googlecompute" "centos_stream8_image" {
   zone                = "${var.zone}"
   ssh_username        = "${var.ssh_username}"
   machine_type        = "${var.machine_type}"
-  image_name          = "${var.image_name}"
+  image_name        = "${var.image_name}"
 }
 
 build {
