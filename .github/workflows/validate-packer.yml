@@ -1,0 +1,59 @@
+name: build-packer
+env:
+  DEV_DATABASE: ${{ vars.DEV_DATABASE }}
+  DEV_USERNAME: ${{ vars.DEV_USERNAME}}
+  DEV_PASSWORD: ${{ vars.DEV_PASSWORD }}
+  GOOGLE_APPLICATION_CREDENTIALS: ${{ vars.GOOGLE_APPLICATION_CREDENTIALS}}
+  PORT: ${{vars.PORT}}
+  DEV_DIALECT: ${{vars.DEV_DIALECT}}
+  DEV_HOST: ${{vars.DEV_HOST}}
+
+on:
+  pull_request:
+    branches: 
+      - main
+
+jobs:
+  build:
+    name: build-packer
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Environment Variables
+        run: |
+          echo "DEV_DATABASE=${DEV_DATABASE}" >> $GITHUB_WORKSPACE/.env
+          echo "DEV_PASSWORD=${DEV_PASSWORD}" >> $GITHUB_WORKSPACE/.env
+          echo "DEV_USERNAME=${DEV_USERNAME}" >> $GITHUB_WORKSPACE/.env
+          echo "DEV_HOST=${DEV_HOST}" >> $GITHUB_WORKSPACE/.env
+          echo "DEV_DIALECT=${DEV_DIALECT}" >> $GITHUB_WORKSPACE/.env
+          echo "PORT=${PORT}" >> $GITHUB_WORKSPACE/.env
+
+      - name: Check .env file
+        run: |
+          if [ -f "$GITHUB_WORKSPACE/.env" ]; then
+            echo ".env file exists"
+            cat $GITHUB_WORKSPACE/.env
+          else
+            echo ".env file does not exist"
+            exit 1
+          fi
+
+      - name: Build zip
+        working-directory: ${{ github.workspace }}
+        run: zip -r webapp.zip .
+            
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}'
+
+      - name: Run packer
+        run: | 
+              cd packer/
+              packer init centos_packer.pkr.hcl
+              packer fmt centos_packer.pkr.hcl -check
+              packer validate -var-file="variables.pkrvars.hcl" centos_packer.pkr.hcl -check
