@@ -36,6 +36,7 @@ echo "================================================================="
 sudo unzip /tmp/webapp.zip -d /opt/csye6225/
 (cd /opt/csye6225/ && sudo npm install && sudo npm ci)
 sudo chown -R csye6225:csye6225 /opt/csye6225/
+sudo chmod 750 /opt/csye6225/
 
 echo "================================================================="
 echo "Moving systemctl service"
