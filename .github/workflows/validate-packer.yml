@@ -1,12 +1,7 @@
 name: validate-packer
 env:
-  DEV_DATABASE: ${{ vars.DEV_DATABASE }}
-  DEV_USERNAME: ${{ vars.DEV_USERNAME}}
-  DEV_PASSWORD: ${{ vars.DEV_PASSWORD }}
   GOOGLE_APPLICATION_CREDENTIALS: ${{ vars.GOOGLE_APPLICATION_CREDENTIALS}}
-  PORT: ${{vars.PORT}}
-  DEV_DIALECT: ${{vars.DEV_DIALECT}}
-  DEV_HOST: ${{vars.DEV_HOST}}
+  PACKER_VARS: ${{vars.PACKER_VARS}}
 
 on:
   pull_request:
@@ -22,25 +17,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
-
-      - name: Setup Environment Variables
-        run: |
-          echo "DEV_DATABASE=${DEV_DATABASE}" >> $GITHUB_WORKSPACE/.env
-          echo "DEV_PASSWORD=${DEV_PASSWORD}" >> $GITHUB_WORKSPACE/.env
-          echo "DEV_USERNAME=${DEV_USERNAME}" >> $GITHUB_WORKSPACE/.env
-          echo "DEV_HOST=${DEV_HOST}" >> $GITHUB_WORKSPACE/.env
-          echo "DEV_DIALECT=${DEV_DIALECT}" >> $GITHUB_WORKSPACE/.env
-          echo "PORT=${PORT}" >> $GITHUB_WORKSPACE/.env
-
-      - name: Check .env file
-        run: |
-          if [ -f "$GITHUB_WORKSPACE/.env" ]; then
-            echo ".env file exists"
-            cat $GITHUB_WORKSPACE/.env
-          else
-            echo ".env file does not exist"
-            exit 1
-          fi
 
       - name: Build zip
         working-directory: ${{ github.workspace }}
@@ -62,4 +38,5 @@ jobs:
               cd packer/
               packer init centos_packer.pkr.hcl
               packer fmt -check centos_packer.pkr.hcl
-              packer validate -var-file="variables.pkrvars.hcl" centos_packer.pkr.hcl
+              packer validate -var-file=<(echo "$PACKER_VARS") centos_packer.pkr.hcl
+              

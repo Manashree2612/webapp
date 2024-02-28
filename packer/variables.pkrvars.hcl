@@ -1,6 +1,0 @@
-project_id          = "clouddev-415518"
-source_image_family = "centos-stream-8"
-zone                = "us-east1-b"
-ssh_username        = "packer"
-machine_type        = "e2-standard-16"
-image_name          = "centos-image"
