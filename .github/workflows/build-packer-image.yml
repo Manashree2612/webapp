@@ -3,6 +3,7 @@ env:
   GOOGLE_APPLICATION_CREDENTIALS: ${{ vars.GOOGLE_APPLICATION_CREDENTIALS}}
   PACKER_VARS: ${{vars.PACKER_VARS}}
 
+
 on:
   push:
     branches: 
