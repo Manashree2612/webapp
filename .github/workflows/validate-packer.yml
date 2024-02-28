@@ -38,6 +38,6 @@ jobs:
               cd packer/
               packer init centos_packer.pkr.hcl
               packer fmt -check centos_packer.pkr.hcl
-              echo "$PACKER_VARS" > variables.tfvars.hcl
-              packer validate -var-file=variables.tfvars.hcl centos_packer.pkr.hcl
+              echo "$PACKER_VARS" > variables.pkvars.hcl
+              packer validate -var-file=variables.pkvars.hcl centos_packer.pkr.hcl
               
