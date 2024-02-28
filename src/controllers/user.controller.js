@@ -59,6 +59,8 @@ const createUser = async (req, res, next) => {
                 username: newUser.username,
                 first_name: newUser.first_name,
                 last_name: newUser.last_name,
+                account_created: newUser.account_created,
+                account_updated: newUser.account_updated
             });
         } else {
             return res.status(400).json({ error: 'Bad Request', message: `User already exists with username: ${existingUser.username}` });
