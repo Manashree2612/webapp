@@ -1,6 +1,7 @@
 name: build-packer
 env:
   GOOGLE_APPLICATION_CREDENTIALS: ${{ vars.GOOGLE_APPLICATION_CREDENTIALS}}
+  PACKER_VARS: ${{vars.PACKER_VARS}}
 
 on:
   push:
@@ -31,5 +32,5 @@ jobs:
               cd packer/
               packer init centos_packer.pkr.hcl
               packer fmt centos_packer.pkr.hcl
-              packer validate -var-file="variables.pkrvars.hcl" centos_packer.pkr.hcl
-              packer build --force -var-file="variables.pkrvars.hcl" centos_packer.pkr.hcl
+              echo "$PACKER_VARS" > variables.tfvars.hcl
+              packer validate -var-file=variables.tfvars.hcl centos_packer.pkr.hcl
