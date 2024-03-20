@@ -58,6 +58,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+      
+      - name: Create Log working-directory
+        run: sudo mkdir -p /var/log/webapp/ && sudo chmod 777 /var/log/webapp/
 
       - name: Run integration tests
         run: |
