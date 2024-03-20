@@ -6,11 +6,17 @@ const { LoggingWinston } = require('@google-cloud/logging-winston');
 const loggingWinston = new LoggingWinston();
 
 const logFormat = winston.format.combine(
-  winston.format.timestamp({ format: 'YYYY-MM-DDTHH:mm:ss.SSSZ' }), // Use a consistent timestamp format
+  winston.format.timestamp(),
   winston.format.printf(info => {
     const { timestamp, level, message } = info;
     const severity = level.toUpperCase();
-    return `[${timestamp}] ${severity}: ${message}`;
+    const logValue = {
+      timestamp,
+      severity,
+      message,
+    };
+
+    return JSON.stringify(logValue);
   })
 );
 
