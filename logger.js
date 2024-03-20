@@ -7,7 +7,11 @@ const loggingWinston = new LoggingWinston();
 
 const logFormat = winston.format.combine(
   winston.format.timestamp(),
-  winston.format.simple()
+  winston.format.printf(info => {
+    const { timestamp, level, message } = info;
+    const severity = level.toUpperCase();
+    return `[${timestamp}] ${severity}: ${message}`;
+  })
 );
  
 const logger = winston.createLogger({
@@ -19,7 +23,7 @@ const logger = winston.createLogger({
       level: 'info',
     }),
  
-    // Log 'error' and 'warning' messages to a separate file
+    // Create a separate file for Log 'error' and 'warning' messages
     new winston.transports.File({
       filename: "../../var/log/webapp/csye6225.log",
       level: 'error',
@@ -43,5 +47,6 @@ if (process.env.NODE_ENV === 'production') {
     info: (message) => console.log(`[INFO] ${message}`),
     warn: (message) => console.warn(`[WARN] ${message}`),
     error: (message) => console.error(`[ERROR] ${message}`),
+    debug: (message) =>  console.error(`[DEBUG] ${message}`)
   }
 }

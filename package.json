@@ -4,7 +4,7 @@
   "description": "assignment",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --experimental-specifier-resolution=node ./src/**/*.test.js --exit"
+    "test": "mocha ./src/**/*.test.js"
   },
   "keywords": [],
   "author": "",
