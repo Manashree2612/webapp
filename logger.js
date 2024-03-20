@@ -39,7 +39,6 @@ const logger = winston.createLogger({
     // Create a separate file for Log 'warning' messages
     new winston.transports.Console({
       format: logFormat,
-      level: 'warn',
     }),
     loggingWinston
   ],
