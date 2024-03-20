@@ -36,7 +36,7 @@ echo "================================================================="
 sudo unzip /tmp/webapp.zip -d /opt/csye6225/
 (cd /opt/csye6225/ && sudo npm install && sudo npm ci)
 sudo chown -R csye6225:csye6225 /opt/csye6225/
-sudo chmod 750 /opt/csye6225/
+sudo chmod -R 755 /opt/csye6225/
 
 echo "================================================================="
 echo "Installing Ops agent"
@@ -69,5 +69,6 @@ echo "Moving systemctl service"
 echo "================================================================="
 # Move systemd service unit file to the correct location
 sudo mv /opt/csye6225/cloud.service /etc/systemd/system/cloud.service
+sudo chown -R csye6225:csye6225 /var/log/webapp
 
 # echo "=======================ALL DONE==================================="
