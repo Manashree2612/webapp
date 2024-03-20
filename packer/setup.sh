@@ -30,13 +30,38 @@ then
 fi
 
 echo "================================================================="
-echo "Installing app dependenciess"
+echo "Installing app dependencies"
 echo "================================================================="
 
 sudo unzip /tmp/webapp.zip -d /opt/csye6225/
 (cd /opt/csye6225/ && sudo npm install && sudo npm ci)
 sudo chown -R csye6225:csye6225 /opt/csye6225/
 sudo chmod 750 /opt/csye6225/
+
+echo "================================================================="
+echo "Installing Ops agent"
+echo "================================================================="
+curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
+sudo bash add-google-cloud-ops-agent-repo.sh --also-install
+
+echo 'logging:
+  receivers:
+    my-app-receiver:
+      type: files
+      include_paths:
+        - /var/logs/csye6225.log
+      record_log_file_path: true
+  processors:
+    my-app-processor:
+      type: parse_json
+      time_key: time
+      time_format: "%Y-%m-%dT%H:%M:%S.%L%Z"
+  service:
+    pipelines:
+      default_pipeline:
+        receivers: [my-app-receiver]
+        processors: [my-app-processor]' | sudo tee /etc/google-cloud-ops-agent/config.yaml > /dev/null
+sudo systemctl restart google-cloud-ops-agent
 
 echo "================================================================="
 echo "Moving systemctl service"

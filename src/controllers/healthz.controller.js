@@ -1,12 +1,13 @@
 const db = require('../models/index.js');
+const logger = require('../../logger');
 
 const testDbConnection = async (req, res, next) => {
     try {
         await db.sequelize.authenticate();
-        console.log('Connected to db');
+        logger.info('Connected to db');
         next();
     } catch (error) {
-        console.error('Unable to connect to the database.');
+        logger.error('Unable to connect to the database.');
         return res.status(503).json();
     }
 };
@@ -14,9 +15,9 @@ const testDbConnection = async (req, res, next) => {
 const syncDatabase = async () => {
     try {
         await db.sequelize.sync();
-        console.log('Database synchronized successfully');
+        logger.info('Database synchronized successfully');
     } catch (error) {
-        console.error('Error while synchronizing database ', error);
+        logger.error('Error while synchronizing database ', error);
     }
 };
 
