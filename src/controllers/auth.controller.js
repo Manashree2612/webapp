@@ -5,6 +5,7 @@ const validateAuthToken = async (req, res, next) => {
   const authToken = req.headers.authorization;
 
   if (!authToken || !authToken.startsWith("Basic ")) {
+    logger.error('Unauthorized: Authorization token missing or invalid');
     return res.status(401).send({ error: 'Unauthorized' });
   }
 
@@ -22,17 +23,20 @@ const validateAuthToken = async (req, res, next) => {
       //check if the password matched with the provided credentials
       const isPasswordSame = await bcrypt.compare(userCredentials[1], user.password)
       if (!isPasswordSame) {
+        logger.error('Unauthorized: Incorrect password for the provided username');
         return res.status(401).send({ error: 'Unauthorized', message: 'Incorrect password or username' });
       }
     } else {
+      logger.error('Unauthorized: User not found with the provided username');
       return res.status(401).send({ error: 'Unauthorized', message: 'Incorrect password or username' });
     }
 
     req.user = user.id;
+    logger.info('User authorized successfully');
     next();
   } catch (error) {
     // Handle any errors that occur during the authorization process
-    console.error(error);
+    logger.error('Internal Server Error:', error);
     res.status(500).send({ error: 'Internal Server Error' });
   }
 };

@@ -49,7 +49,7 @@ echo 'logging:
     my-app-receiver:
       type: files
       include_paths:
-        - /var/logs/csye6225.log
+        - /var/log/csye6225.log
       record_log_file_path: true
   processors:
     my-app-processor:
