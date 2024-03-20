@@ -6,10 +6,7 @@ const { LoggingWinston } = require('@google-cloud/logging-winston');
 const loggingWinston = new LoggingWinston();
 
 const logFormat = winston.format.combine(
-  winston.format.timestamp({
-    format: 'YYYY-MM-DDTHH:mm:ss.SSSZ'
-  }),
-  winston.format.colorize(),
+  winston.format.timestamp({ format: 'YYYY-MM-DDTHH:mm:ss.SSSZ' }), // Use a consistent timestamp format
   winston.format.printf(info => {
     const { timestamp, level, message } = info;
     const severity = level.toUpperCase();
@@ -24,18 +21,21 @@ const logger = winston.createLogger({
     new winston.transports.File({
       filename: "../../var/log/webapp/csye6225.log",
       level: 'info',
+      
     }),
 
     // Create a separate file for Log 'error' and 'warning' messages
     new winston.transports.File({
       filename: "../../var/log/webapp/csye6225.log",
       level: 'error',
+      labels: { severity: 'error' },
     }),
  
     // Create a separate file for Log 'warning' messages
     new winston.transports.Console({
       format: logFormat,
       level: 'warn',
+      labels: { severity: 'warning' },
     }),
   ],
 });
