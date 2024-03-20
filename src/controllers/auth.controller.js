@@ -1,5 +1,6 @@
 const db = require("../models/index");
 const bcrypt = require("bcrypt");
+const logger = require('../../logger');
 
 const validateAuthToken = async (req, res, next) => {
   const authToken = req.headers.authorization;
