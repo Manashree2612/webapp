@@ -24,21 +24,9 @@ const logger = winston.createLogger({
   level: 'info',
   format: logFormat,
   transports: [
+    new winston.transports.Console(),
     new winston.transports.File({
-      filename: "../../var/log/webapp/csye6225.log",
-      level: 'info',
-      
-    }),
-
-    // Create a separate file for Log 'error' and 'warning' messages
-    new winston.transports.File({
-      filename: "../../var/log/webapp/csye6225.log",
-      level: 'error',
-    }),
- 
-    // Create a separate file for Log 'warning' messages
-    new winston.transports.Console({
-      format: logFormat,
+      filename: "../../var/log/webapp/csye6225.log"  
     }),
     loggingWinston
   ],
