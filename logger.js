@@ -44,9 +44,7 @@ const logger = winston.createLogger({
 
     new transports.Console({
       format: logFormat
-    }),
-
-    loggingWinston
+    })
   ]
 });
 
