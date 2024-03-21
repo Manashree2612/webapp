@@ -3,7 +3,9 @@ const winston = require('winston');
 // Imports the Google Cloud client library for Winston
 const { LoggingWinston } = require('@google-cloud/logging-winston');
 
-const loggingWinston = new LoggingWinston();
+const loggingWinston = new LoggingWinston({
+  level: 'info',
+});
 
 const logFormat = winston.format.combine(
   winston.format.timestamp(),
@@ -21,15 +23,31 @@ const logFormat = winston.format.combine(
 );
 
 const logger = winston.createLogger({
-  level: 'info',
-  format: logFormat,
   transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({
-      filename: "../../var/log/webapp/csye6225.log"  
+    new transports.File({
+      filename: `../../var/log/webapp/info.log`,
+      level: 'info',
+      format: logFormat
     }),
+
+    new transports.File({
+      filename: `../../var/log/webapp/error.log`,
+      level: 'error',
+      format: logFormat
+    }),
+
+    new transports.File({
+      filename: `../../var/log/webapp/warn.log`,
+      level: 'warn',
+      format: logFormat
+    }),
+
+    new transports.Console({
+      format: logFormat
+    }),
+
     loggingWinston
-  ],
+  ]
 });
 
 if (process.env.NODE_ENV === 'production') {
