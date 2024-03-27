@@ -65,7 +65,7 @@ const createUser = async (req, res, next) => {
             // Construct the user info object
 
 
-            publishMessage('projects/clouddev-415518/topics/verify_email', {
+            publishMessage('verify_email', {
                 id: newUser.id,
                 username: newUser.username,
                 first_name: newUser.first_name,
