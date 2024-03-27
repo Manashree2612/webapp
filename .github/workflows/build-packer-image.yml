@@ -4,7 +4,7 @@ env:
   PACKER_VARS: ${{ vars.PACKER_VARS }}
 
 on:
-  push:
+  pull_request:
     branches: 
       - main
 
