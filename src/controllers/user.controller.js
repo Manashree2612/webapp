@@ -1,7 +1,7 @@
 const db = require('../models/index.js');
 const user = require('../models/user.js');
 const logger = require('../../logger');
-const {PubSub} = require('@google-cloud/pubsub');
+const { PubSub } = require('@google-cloud/pubsub');
 const mailgun = require('mailgun-js');
 
 // Creates a client; cache this for further use
@@ -12,43 +12,41 @@ async function publishMessage(topicNameOrId, data) {
     // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
 
     const dataBuffer = Buffer.from(JSON.stringify(data));
-  
+
     try {
-      const messageId = await pubSubClient
-        .topic(topicNameOrId)
-        .publishMessage({data: dataBuffer});
+        const messageId = await pubSubClient.topic(topicNameOrId).publishMessage({ data: dataBuffer });
         logger.info(`Message ${messageId} published.`, 'databuffer', dataBuffer);
     } catch (error) {
-      logger.error(`Received error while publishing: ${error.message}`);
-      process.exitCode = 1;
+        logger.error(`Received error while publishing: ${error.message}`);
+        process.exitCode = 1;
     }
-  }
+}
 
-  function listenForMessages(subscriptionNameOrId, timeout) {
+function listenForMessages(subscriptionNameOrId, timeout) {
     // References an existing subscription
     const subscription = pubSubClient.subscription(subscriptionNameOrId);
-  
+
     // Create an event handler to handle messages
     let messageCount = 0;
     const messageHandler = message => {
-      logger.info(`Received message ${message.id}:`);
-      logger.info(`\tData: ${message.data}`);
-      logger.info(`\tAttributes: ${message.attributes}`);
-      messageCount += 1;
-  
-      // "Ack" (acknowledge receipt of) the message
-      message.ack();
+        logger.info(`Received message ${message.id}:`);
+        logger.info(`\tData: ${message.data}`);
+        logger.info(`\tAttributes: ${message.attributes}`);
+        messageCount += 1;
+
+        // "Ack" (acknowledge receipt of) the message
+        message.ack();
     };
-  
+
     // Listen for new messages until timeout is hit
     subscription.on('message', messageHandler);
-  
+
     // Wait a while for the subscription to run. (Part of the sample only.)
     setTimeout(() => {
-      subscription.removeListener('message', messageHandler);
-      logger.info(`${messageCount} message(s) received.`);
+        subscription.removeListener('message', messageHandler);
+        logger.info(`${messageCount} message(s) received.`);
     }, timeout * 1000);
-  }
+}
 
 const createUser = async (req, res, next) => {
     try {
@@ -112,13 +110,11 @@ const createUser = async (req, res, next) => {
             // Construct the user info object
 
 
-            publishMessage('user-created',{
+            publishMessage('projects/clouddev-415518/topics/user-created', {
                 id: newUser.id,
                 username: newUser.username,
                 first_name: newUser.first_name,
-                last_name: newUser.last_name,
-                account_created: newUser.account_created,
-                account_updated: newUser.account_updated,
+                last_name: newUser.last_name
             });
 
             return res.status(201).json({
