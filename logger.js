@@ -3,6 +3,9 @@ const { createLogger, transports } = require('winston');
 // Imports the Google Cloud client library for Winston
 const { LoggingWinston } = require('@google-cloud/logging-winston');
 
+const loggingWinston = new LoggingWinston({
+  level: 'info',
+});
 
 const logFormat = winston.format.combine(
   winston.format.timestamp(),
@@ -41,7 +44,8 @@ const logger = winston.createLogger({
 
     new transports.Console({
       format: logFormat
-    })
+    }),
+    loggingWinston
   ]
 });
 
