@@ -228,12 +228,13 @@ const verifyUserEmail = async (req, res, next) => {
         const linkCreatedAt = verifyEmailRecord.created_at.getTime();
 
         if (currentTime - linkCreatedAt > expirationTime) {
+            logger.error('Verification link has expired')
             return res.status(410).send('Verification link has expired');
         }
 
         // Update user account as verified
         await verifyEmailRecord.update({
-            is_verfied: true
+            is_verified: true
         });
         await verifyEmailRecord.save();
 

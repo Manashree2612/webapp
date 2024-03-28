@@ -15,12 +15,12 @@ const validateAuthToken = async (req, res, next) => {
 
   const userVerificationStatus = await db.TrackEmail.findOne({
     where: { email: userCredentials[0] },
-});
+  });
 
-if (!userVerificationStatus || !userVerificationStatus.is_verified) {
+  if (!userVerificationStatus || !userVerificationStatus.is_verified) {
     logger.error(`User's email is not verified yet`);
     return res.status(401).json({ error: 'Unauthorized', message: 'Email not verified' });
-}
+  }
 
   try {
 
