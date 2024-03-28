@@ -13,6 +13,15 @@ const validateAuthToken = async (req, res, next) => {
   const base64Credentials = authToken.split(' ')[1];
   const userCredentials = Buffer.from(base64Credentials, 'base64').toString('utf-8').split(':');
 
+  const userVerificationStatus = await db.TrackEmail.findOne({
+    where: { email: userCredentials[0] },
+});
+
+if (!userVerificationStatus || !userVerificationStatus.is_verified) {
+    logger.error(`User's email is not verified yet`);
+    return res.status(401).json({ error: 'Unauthorized', message: 'Email not verified' });
+}
+
   try {
 
     const user = await db.User.findOne({

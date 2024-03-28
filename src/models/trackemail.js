@@ -2,10 +2,10 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-    class VerifyEmail extends Model {
+    class TrackEmail extends Model {
     }
-    VerifyEmail.init({
-        token: {
+    TrackEmail.init({
+        id: {
             primaryKey: true,
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -16,9 +16,17 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true
         },
-        is_verified: {
+        is_verfied: {
             type: DataTypes.BOOLEAN,
-            defaultValue:false,
+            allowNull: false,
+            defaultValue: false
+        },
+        verificationToken: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        verificationLink: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
         created_at: {
@@ -28,10 +36,10 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
         sequelize,
-        modelName: 'VerifyEmail',
-        tableName: 'verifyemail',
+        modelName: 'TrackEmail',
+        tableName: 'TrackEmail',
         timestamps: false // Disable timestamps
     });
 
-    return VerifyEmail;
+    return TrackEmail;
 };

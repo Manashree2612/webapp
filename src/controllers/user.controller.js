@@ -65,7 +65,7 @@ const createUser = async (req, res, next) => {
             // Construct the user info object
 
 
-            publishMessage('verify_email', {
+            await publishMessage('verify_email', {
                 id: newUser.id,
                 username: newUser.username,
                 first_name: newUser.first_name,
@@ -208,14 +208,34 @@ const verifyUserEmail = async (req, res, next) => {
         // Parse the JSON string into an object
         const userInfo = JSON.parse(decodedToken);
 
+        // Fetch the created_at time from the VerifyEmail table based on the user email
+        const verifyEmailRecord = await db.TrackEmail.findOne({
+            where: {
+                email: userInfo.username, 
+            }
+        });
+
+        logger.info('verifyEmailRecord',verifyEmailRecord);
+
+        if (!verifyEmailRecord) {
+            logger.error('Verification record not found')
+            return res.status(404).send('Verification record not found');
+        }
+
         // Check if the token is expired (2 min validity)
         const expirationTime = 2 * 60 * 1000; // 2 min in milliseconds
-        if (Date.now() - userInfo.timestamp > expirationTime) {
+        const currentTime = Date.now();
+        const linkCreatedAt = verifyEmailRecord.created_at.getTime();
+
+        if (currentTime - linkCreatedAt > expirationTime) {
             return res.status(410).send('Verification link has expired');
         }
 
-        // Update user account as verified (this is a sample operation)
-        // users[userInfo.userId].verified = true;
+        // Update user account as verified
+        await verifyEmailRecord.update({
+            is_verfied: true
+        });
+        await verifyEmailRecord.save();
 
         // Send response indicating successful verification
         logger.info('Email verified successfully');
