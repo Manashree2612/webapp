@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true
         },
-        is_verfied: {
+        is_verified: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false
