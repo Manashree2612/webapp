@@ -19,7 +19,7 @@ const validateAuthToken = async (req, res, next) => {
 
   if (!userVerificationStatus || !userVerificationStatus.is_verified) {
     logger.error(`User's email is not verified yet`);
-    return res.status(401).json({ error: 'Unauthorized', message: 'Email not verified' });
+    return res.status(403).json({ error: 'Forbidden', message: 'Email not verified' });
   }
 
   try {
