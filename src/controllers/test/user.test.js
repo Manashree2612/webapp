@@ -23,7 +23,7 @@ describe('Integration Tests for user api', () => {
 
         const userResponse = await request.get(`/v1/user/self`).set('Authorization', `Basic ${base64Credentials}`);
         console.log('userResponse', userResponse);
-        expect(userResponse.status).to.equal(401);
+        expect(userResponse.status).to.equal(403);
        
     });
 
@@ -39,7 +39,7 @@ describe('Integration Tests for user api', () => {
 
         const userResponse = await request.get('/v1/user/self').set('Authorization', `Basic ${base64Credentials}`);
 
-        expect(userResponse.status).to.equal(401);
+        expect(userResponse.status).to.equal(403);
        
     });
 
