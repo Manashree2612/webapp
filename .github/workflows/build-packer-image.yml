@@ -44,7 +44,7 @@ jobs:
           gcloud compute instance-templates create new-template \
             --instance-template-region=us-east1 \
             --machine-type=e2-standard-2 \
-            --image=centos-image \
+            --image=projects/yash-cloud/global/images/centos-image \
             --region=us-east1 \
             --network=webapp-vc \
             --subnet=webapp \
