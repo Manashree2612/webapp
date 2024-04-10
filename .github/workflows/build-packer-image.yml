@@ -55,14 +55,21 @@ jobs:
             --boot-disk-kms-key=${{ vars.VM_KEY_PATH }} \
             --tags=allow-health-check,http-server,https-server \
 
+      - name: Generate Unique Template Name
+        id: generate_template_name
+        run: echo "TEMPLATE-$(date +%Y%m%d%H%M%S)" >> template_name.txt
+
       - name: Configure the managed instance group to use this new template
         run: |
+          template_name="$(cat template_name.txt)"
+
           gcloud compute instance-groups managed set-instance-template instance-group-manager \
-            --template=projects/clouddev-415518/regions/us-east1/instanceTemplates/instance-template-git \
+            --template="$template_name" \
             --region=us-east1
 
       - name: Start Rolling Update of Instance Group Manager
         run: |
+          template_name="$(cat template_name.txt)"
           gcloud compute instance-groups managed rolling-action start-update instance-group-manager \
-            --version=template=projects/clouddev-415518/regions/us-east1/instanceTemplates/instance-template-git \
+            --version=template="$template_name" \
             --region=us-east1
