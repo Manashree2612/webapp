@@ -50,7 +50,6 @@ jobs:
           gcloud compute instance-templates create new-template \
             --instance-template-region=us-east1 \
             --machine-type=e2-standard-2 
-            --image-project=clouddev-415518
             --image=projects/clouddev-415518/global/images/${{ steps.get-latest-image.outputs.latestImage }} \
             --region=us-east1 \
             --network=webapp-vc \
