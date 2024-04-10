@@ -28,6 +28,7 @@ jobs:
         with:
           credentials_json: '${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}'
 
+
       # - name: Run packer
       #   run: |
       #     cd packer/
