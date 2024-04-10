@@ -5,6 +5,7 @@ env:
   METADATA_SCRIPT: $ {{vars.METADATA_SCRIPT }}
   METADATA: ${{ vars.METADATA }}
   VM_KEY_PATH: ${{ vars.VM_KEY_PATH }}
+  TEMPLATE_NAME : "TEMPLATE-$(date +%Y%m%d%H%M%S)"
 
 on:
   pull_request:
@@ -36,14 +37,11 @@ jobs:
       #     echo "$PACKER_VARS" > variables.pkvars.hcl
       #     packer validate -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
       #     packer build --force -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
-      
-      - name: Generate Unique Template Name
-        id: generate_template_name
-        run: echo "TEMPLATE-$(date +%Y%m%d%H%M%S)" >> template_name.txt
+    
 
       - name: Create a new Instance Template version with the latest machine image
         run: |
-          gcloud compute instance-templates create "$template_name" \
+          gcloud compute instance-templates create "$TEMPLATE_NAME" \
             --instance-template-region=us-east1 \
             --machine-type=e2-standard-2 \
             --image=centos-image \
@@ -61,15 +59,14 @@ jobs:
 
       - name: Configure the managed instance group to use this new template
         run: |
-          template_name="$(cat template_name.txt)"
 
           gcloud compute instance-groups managed set-instance-template instance-group-manager \
-            --template="$template_name" \
+            --template="$TEMPLATE_NAME" \
             --region=us-east1
 
       - name: Start Rolling Update of Instance Group Manager
         run: |
           template_name="$(cat template_name.txt)"
           gcloud compute instance-groups managed rolling-action start-update instance-group-manager \
-            --version=template="$template_name" \
+            --version=template="$TEMPLATE_NAME" \
             --region=us-east1
