@@ -29,14 +29,14 @@ jobs:
         with:
           credentials_json: '${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}'
 
-      # - name: Run packer
-      #   run: |
-      #     cd packer/
-      #     packer init centos_packer.pkr.hcl
-      #     packer fmt centos_packer.pkr.hcl
-      #     echo "$PACKER_VARS" > variables.pkvars.hcl
-      #     packer validate -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
-      #     packer build --force -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
+      - name: Run packer
+        run: |
+          cd packer/
+          packer init centos_packer.pkr.hcl
+          packer fmt centos_packer.pkr.hcl
+          echo "$PACKER_VARS" > variables.pkvars.hcl
+          packer validate -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
+          packer build --force -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
     
 
       - name: Create a new Instance Template version with the latest machine image
@@ -45,7 +45,7 @@ jobs:
             --instance-template-region=us-east1 \
             --machine-type=e2-standard-2 \
             --image-project=/clouddev-415518 \
-            --image=/projects/clouddev-415518/global/images/centos-image \
+            --image=centos-image \
             --region=us-east1 \
             --network=webapp-vc \
             --subnet=webapp \
