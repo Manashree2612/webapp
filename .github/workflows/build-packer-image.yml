@@ -5,7 +5,7 @@ env:
   METADATA_SCRIPT: $ {{vars.METADATA_SCRIPT }}
   METADATA: ${{ vars.METADATA }}
   VM_KEY_PATH: ${{ vars.VM_KEY_PATH }}
-  TEMPLATE_NAME : "Template-$(date +%s)" 
+  TEMPLATE_NAME : "Template-$(date +%Y-%m-%d-%H-%M)"
 
 on:
   pull_request:
