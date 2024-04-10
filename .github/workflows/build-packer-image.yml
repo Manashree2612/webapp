@@ -51,7 +51,7 @@ jobs:
             --boot-disk-size=100GB \
             --boot-disk-type=pd-balanced \
             --metadata "$METADATA"
-            --metadata=startup-script='"$METADATA_SCRIPT"'
+            --metadata startup-script='"$METADATA_SCRIPT"'
             --service-account=vm-service-account@clouddev-415518.iam.gserviceaccount.com \
             --scopes=cloud-platform \
             --boot-disk-kms-key=${{ vars.VM_KEY_PATH }} \
