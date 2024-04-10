@@ -38,12 +38,20 @@ jobs:
       #     packer build --force -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
     
 
+      - name: Get Latest Image Name
+        id: get-latest-image
+        run: |
+          LATEST_IMAGE=$(gcloud compute images list --project=clouddev-415518 --filter="name:centos-image" --format="get(NAME)" --limit=1)
+          echo "Latest Image: $LATEST_IMAGE"
+          echo "::set-output name=latestImage::$LATEST_IMAGE"
+
       - name: Create a new Instance Template version with the latest machine image
         run: |
           gcloud compute instance-templates create new-template \
             --instance-template-region=us-east1 \
             --machine-type=e2-standard-2 
-            --image=centos-image \
+            --image-project=clouddev-415518
+            --image=projects/clouddev-415518/global/images/${{ steps.get-latest-image.outputs.latestImage }} \
             --region=us-east1 \
             --network=webapp-vc \
             --subnet=webapp \
