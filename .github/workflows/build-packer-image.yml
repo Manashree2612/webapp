@@ -51,18 +51,17 @@ jobs:
             --boot-disk-size=100GB \
             --boot-disk-type=pd-balanced \
             --metadata startup-script="#!/bin/bash
-            echo "DEV_USERNAME=${{vars.MYSQL_USER}}
-            DEV_PASSWORD=${{vars.MYSQL_PASSWORD}}
-            DEV_DATABASE=${{vars.MYSQL_DATABASE}}
-            DEV_HOST=${{vars.MYSQL_HOST}}
-            DEV_DIALECT=mysql
-            PORT=8080
-            NODE_ENV=production" > /tmp/.env
-            sudo mv /tmp/.env /opt/csye6225/.env
-
-            sudo systemctl daemon-reload
-            sudo systemctl enable cloud.service
-            sudo systemctl start cloud.service
+              echo "DEV_USERNAME=${{vars.MYSQL_USER}}
+              DEV_PASSWORD=${{vars.MYSQL_PASSWORD}}
+              DEV_DATABASE=${{vars.MYSQL_DATABASE}}
+              DEV_HOST=${{vars.MYSQL_HOST}}
+              DEV_DIALECT=mysql
+              PORT=8080
+              NODE_ENV=production" > /tmp/.env
+              sudo mv /tmp/.env /opt/csye6225/.env
+              sudo systemctl daemon-reload
+              sudo systemctl enable cloud.service
+              sudo systemctl start cloud.service
             " \
             --service-account=vm-service-account@clouddev-415518.iam.gserviceaccount.com \
             --scopes=cloud-platform \
