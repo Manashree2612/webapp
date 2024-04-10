@@ -2,7 +2,7 @@ name: build-packer
 env:
   GOOGLE_APPLICATION_CREDENTIALS: ${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}
   PACKER_VARS: ${{ vars.PACKER_VARS }}
-  METADATA_SCRIPT: $ {{vars.METADATA_SCRIPT }}
+  METADATA_SCRIPT: ${{ vars.METADATA_SCRIPT }}
   METADATA: ${{ vars.METADATA }}
   VM_KEY_PATH: ${{ vars.VM_KEY_PATH }}
   TEMPLATE_NAME : "Template-$(date +%Y-%m-%d-%H-%M)"
