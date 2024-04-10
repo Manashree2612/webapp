@@ -50,13 +50,11 @@ jobs:
             --subnet=webapp \
             --boot-disk-size=100GB \
             --boot-disk-type=pd-balanced \
-            --metadata "$METADATA"
             --metadata startup-script="#!/bin/bash
-            # Create the .env file with the specified content
-            echo "DEV_USERNAME=${mysql_user}
-            DEV_PASSWORD=${mysql_password}
-            DEV_DATABASE=${mysql_database}
-            DEV_HOST=${mysql_host}
+            echo "DEV_USERNAME=${{vars.MYSQL_USER}}
+            DEV_PASSWORD=${{vars.MYSQL_PASSWORD}}
+            DEV_DATABASE=${{vars.MYSQL_DATABASE}}
+            DEV_HOST=${{vars.MYSQL_HOST}}
             DEV_DIALECT=mysql
             PORT=8080
             NODE_ENV=production" > /tmp/.env
