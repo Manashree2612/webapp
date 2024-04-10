@@ -28,18 +28,22 @@ jobs:
         with:
           credentials_json: '${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}'
 
-      - name: Run packer
-        run: |
-          cd packer/
-          packer init centos_packer.pkr.hcl
-          packer fmt centos_packer.pkr.hcl
-          echo "$PACKER_VARS" > variables.pkvars.hcl
-          packer validate -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
-          packer build --force -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
+      # - name: Run packer
+      #   run: |
+      #     cd packer/
+      #     packer init centos_packer.pkr.hcl
+      #     packer fmt centos_packer.pkr.hcl
+      #     echo "$PACKER_VARS" > variables.pkvars.hcl
+      #     packer validate -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
+      #     packer build --force -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
+      
+      - name: Generate Unique Template Name
+        id: generate_template_name
+        run: echo "TEMPLATE-$(date +%Y%m%d%H%M%S)" >> template_name.txt
 
       - name: Create a new Instance Template version with the latest machine image
         run: |
-          gcloud compute instance-templates create instance-template-git \
+          gcloud compute instance-templates create "$template_name" \
             --instance-template-region=us-east1 \
             --machine-type=e2-standard-2 \
             --image=centos-image \
@@ -48,16 +52,12 @@ jobs:
             --subnet=webapp \
             --boot-disk-size=100GB \
             --boot-disk-type=pd-balanced \
-            --metadata $METADATA
-            --metadata=startup-script=${METADATA_SCRIPT}
+            --metadata "$METADATA"
+            --metadata=startup-script="${METADATA_SCRIPT}"
             --service-account=vm-service-account@clouddev-415518.iam.gserviceaccount.com \
             --scopes=cloud-platform \
             --boot-disk-kms-key=${{ vars.VM_KEY_PATH }} \
             --tags=allow-health-check,http-server,https-server \
-
-      - name: Generate Unique Template Name
-        id: generate_template_name
-        run: echo "TEMPLATE-$(date +%Y%m%d%H%M%S)" >> template_name.txt
 
       - name: Configure the managed instance group to use this new template
         run: |
