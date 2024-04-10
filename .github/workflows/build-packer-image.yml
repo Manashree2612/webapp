@@ -2,7 +2,7 @@ name: build-packer
 env:
   GOOGLE_APPLICATION_CREDENTIALS: ${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}
   PACKER_VARS: ${{ vars.PACKER_VARS }}
-  METADATA_SCRIPT: $ {{vars.METADATA_SCRIPT }}
+  METADATA_SCRIPT: ${{ vars.METADATA_SCRIPT }}
   METADATA: ${{ vars.METADATA }}
   VM_KEY_PATH: ${{ vars.VM_KEY_PATH }}
 
@@ -28,7 +28,6 @@ jobs:
         with:
           credentials_json: '${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}'
 
-
       # - name: Run packer
       #   run: |
       #     cd packer/
@@ -37,24 +36,32 @@ jobs:
       #     echo "$PACKER_VARS" > variables.pkvars.hcl
       #     packer validate -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
       #     packer build --force -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
-      
-      - name: Generate Unique Template Name
-        id: generate_template_name
-        run: echo "TEMPLATE-$(date +%Y%m%d%H%M%S)" >> template_name.txt
+    
 
       - name: Create a new Instance Template version with the latest machine image
         run: |
-          gcloud compute instance-templates create "$template_name" \
+          gcloud compute instance-templates create new-template \
             --instance-template-region=us-east1 \
-            --machine-type=e2-standard-2 \
+            --machine-type=e2-standard-2 
             --image=centos-image \
             --region=us-east1 \
             --network=webapp-vc \
             --subnet=webapp \
             --boot-disk-size=100GB \
             --boot-disk-type=pd-balanced \
-            --metadata "$METADATA"
-            --metadata=startup-script="${METADATA_SCRIPT}"
+            --metadata startup-script="#!/bin/bash
+              echo "DEV_USERNAME=${{vars.MYSQL_USER}}
+              DEV_PASSWORD=${{vars.MYSQL_PASSWORD}}
+              DEV_DATABASE=${{vars.MYSQL_DATABASE}}
+              DEV_HOST=${{vars.MYSQL_HOST}}
+              DEV_DIALECT=mysql
+              PORT=8080
+              NODE_ENV=production" > /tmp/.env
+              sudo mv /tmp/.env /opt/csye6225/.env
+              sudo systemctl daemon-reload
+              sudo systemctl enable cloud.service
+              sudo systemctl start cloud.service
+            " \
             --service-account=vm-service-account@clouddev-415518.iam.gserviceaccount.com \
             --scopes=cloud-platform \
             --boot-disk-kms-key=${{ vars.VM_KEY_PATH }} \
@@ -62,15 +69,31 @@ jobs:
 
       - name: Configure the managed instance group to use this new template
         run: |
-          template_name="$(cat template_name.txt)"
 
           gcloud compute instance-groups managed set-instance-template instance-group-manager \
-            --template="$template_name" \
+            --template=new-template  \
             --region=us-east1
 
-      - name: Start Rolling Update of Instance Group Manager
-        run: |
-          template_name="$(cat template_name.txt)"
-          gcloud compute instance-groups managed rolling-action start-update instance-group-manager \
-            --version=template="$template_name" \
-            --region=us-east1
+      # - name: Start Rolling Update
+      #   run: |
+      #     gcloud compute instance-groups managed rolling-action start-update ${{ vars.MIG_NAME }} \
+      #       --version=template=${{ env.NEW_TEMPLATE_NAME }} \
+      #       --type=proactive \
+      #       --region=${{ vars.REGION }}
+      #   continue-on-error: true
+
+      # - name: Wait for Managed Instance Group Refresh
+      #   id: refresh
+      #   run: |
+      #     sleep 120
+
+      # - name: Monitor Managed Instance Group
+      #   run: |
+      #     output=$(gcloud compute instance-groups managed wait-until ${{ vars.MIG_NAME }} --region=${{ vars.REGION }} --stable)
+      #     if [[ $output == *"Group is stable"* ]]; then
+      #       echo "Managed instance group refresh completed successfully."
+      #       break
+      #     else
+      #       echo "Managed instance group refresh failed."
+      #       exit 1
+      #     fi
