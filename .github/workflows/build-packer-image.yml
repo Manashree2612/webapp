@@ -2,18 +2,18 @@ name: build-packer
 env:
   GOOGLE_APPLICATION_CREDENTIALS: ${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}
   PACKER_VARS: ${{ vars.PACKER_VARS }}
+  METADATA_SCRIPT: $ {{vars.METADATA_SCRIPT}}
+  METADATA: ${{ vars.METADATA}}
 
 on:
-  push:
-    branches: 
+  pull_request:
+    branches:
       - main
 
 jobs:
   build:
     name: build-packer
-
     runs-on: ubuntu-latest
-
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -21,17 +21,46 @@ jobs:
       - name: Build zip
         working-directory: ${{ github.workspace }}
         run: zip -r webapp.zip .
-            
+
       - name: Set up Google Cloud SDK
         uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}'
 
       - name: Run packer
-        run: | 
-              cd packer/
-              packer init centos_packer.pkr.hcl
-              packer fmt centos_packer.pkr.hcl
-              echo "$PACKER_VARS" > variables.pkvars.hcl
-              packer validate -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
-              packer build --force -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
+        run: |
+          cd packer/
+          packer init centos_packer.pkr.hcl
+          packer fmt centos_packer.pkr.hcl
+          echo "$PACKER_VARS" > variables.pkvars.hcl
+          packer validate -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
+          packer build --force -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
+
+      - name: Create a new Instance Template version with the latest machine image
+        run: |
+          gcloud compute instance-templates create instance-template-git \
+            --instance-template-region=us-east1 \
+            --machine-type=e2-standard-2 \
+            --image=centos-image \
+            --region=us-east1 \
+            --network=webapp-vc \
+            --subnet=webapp \
+            --boot-disk-size=100GB \
+            --boot-disk-type=pd-balanced \
+            --metadata $METADATA
+            --metadata=startup-script="${METADATA_SCRIPT}"
+            --service-account=vm-service-account@clouddev-415518.iam.gserviceaccount.com \
+            --scopes=cloud-platform \
+            --tags=allow-health-check,http-server,https-server \
+
+      - name: Configure the managed instance group to use this new template
+        run: |
+          gcloud compute instance-groups managed set-instance-template instance-group-manager \
+            --template=projects/clouddev-415518/regions/us-east1/instanceTemplates/instance-template-git \
+            --region=us-east1
+
+      - name: Start Rolling Update of Instance Group Manager
+        run: |
+          gcloud compute instance-groups managed rolling-action start-update instance-group-manager \
+            --version=template=projects/clouddev-415518/regions/us-east1/instanceTemplates/instance-template-git \
+            --region=us-east1
