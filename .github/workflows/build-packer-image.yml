@@ -2,8 +2,9 @@ name: build-packer
 env:
   GOOGLE_APPLICATION_CREDENTIALS: ${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}
   PACKER_VARS: ${{ vars.PACKER_VARS }}
-  METADATA_SCRIPT: $ {{vars.METADATA_SCRIPT}}
-  METADATA: ${{ vars.METADATA}}
+  METADATA_SCRIPT: $ {{vars.METADATA_SCRIPT }}
+  METADATA: ${{ vars.METADATA }}
+  VM_KEY_PATH: ${{ vars.VM_KEY_PATH }}
 
 on:
   pull_request:
@@ -48,9 +49,10 @@ jobs:
             --boot-disk-size=100GB \
             --boot-disk-type=pd-balanced \
             --metadata $METADATA
-            --metadata=startup-script="${METADATA_SCRIPT}"
+            --metadata=startup-script=${METADATA_SCRIPT}
             --service-account=vm-service-account@clouddev-415518.iam.gserviceaccount.com \
             --scopes=cloud-platform \
+            --boot-disk-kms-key=${{ vars.VM_KEY_PATH }} \
             --tags=allow-health-check,http-server,https-server \
 
       - name: Configure the managed instance group to use this new template
