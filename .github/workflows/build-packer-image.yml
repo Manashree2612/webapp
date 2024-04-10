@@ -41,7 +41,7 @@ jobs:
 
       - name: Create a new Instance Template version with the latest machine image
         run: |
-          gcloud compute instance-templates create "$TEMPLATE_NAME" \
+          gcloud compute instance-templates create new-template \
             --instance-template-region=us-east1 \
             --machine-type=e2-standard-2 \
             --image=centos-image \
@@ -61,11 +61,11 @@ jobs:
         run: |
 
           gcloud compute instance-groups managed set-instance-template instance-group-manager \
-            --template="$TEMPLATE_NAME" \
+            --template=new-template  \
             --region=us-east1
 
       - name: Start Rolling Update of Instance Group Manager
         run: |
           gcloud compute instance-groups managed rolling-action start-update instance-group-manager \
-            --version=template="$TEMPLATE_NAME" \
+            --version=template=new-template \
             --region=us-east1
