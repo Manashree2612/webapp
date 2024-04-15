@@ -74,26 +74,4 @@ jobs:
             --template=new-template  \
             --region=us-east1
 
-      # - name: Start Rolling Update
-      #   run: |
-      #     gcloud compute instance-groups managed rolling-action start-update ${{ vars.MIG_NAME }} \
-      #       --version=template=${{ env.NEW_TEMPLATE_NAME }} \
-      #       --type=proactive \
-      #       --region=${{ vars.REGION }}
-      #   continue-on-error: true
-
-      # - name: Wait for Managed Instance Group Refresh
-      #   id: refresh
-      #   run: |
-      #     sleep 120
-
-      # - name: Monitor Managed Instance Group
-      #   run: |
-      #     output=$(gcloud compute instance-groups managed wait-until ${{ vars.MIG_NAME }} --region=${{ vars.REGION }} --stable)
-      #     if [[ $output == *"Group is stable"* ]]; then
-      #       echo "Managed instance group refresh completed successfully."
-      #       break
-      #     else
-      #       echo "Managed instance group refresh failed."
-      #       exit 1
-      #     fi
+     
