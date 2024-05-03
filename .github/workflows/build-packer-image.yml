@@ -7,7 +7,7 @@ env:
   VM_KEY_PATH: ${{ vars.VM_KEY_PATH }}
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
@@ -28,49 +28,50 @@ jobs:
         with:
           credentials_json: '${{ vars.GOOGLE_APPLICATION_CREDENTIALS }}'
 
-      - name: Run packer
+      # - name: Run packer
+      #   run: |
+      #     cd packer/
+      #     packer init centos_packer.pkr.hcl
+      #     packer fmt centos_packer.pkr.hcl
+      #     echo "$PACKER_VARS" > variables.pkvars.hcl
+      #     packer validate -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
+      #     packer build --force -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
+    
+
+      - name: Create a new Instance Template version with the latest machine image
         run: |
-          cd packer/
-          packer init centos_packer.pkr.hcl
-          packer fmt centos_packer.pkr.hcl
-          echo "$PACKER_VARS" > variables.pkvars.hcl
-          packer validate -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
-          packer build --force -var-file="variables.pkvars.hcl" centos_packer.pkr.hcl
+          gcloud compute instance-templates create new-template \
+            --instance-template-region=us-east1 \
+            --machine-type=e2-standard-2 
+            --image=/projects/clouddev-415518/global/images/centos-image \
+            --region=us-east1 \
+            --network=webapp-vc \
+            --subnet=webapp \
+            --boot-disk-size=100GB \
+            --boot-disk-type=pd-balanced \
+            --metadata startup-script="#!/bin/bash
+              echo "DEV_USERNAME=${{vars.MYSQL_USER}}
+              DEV_PASSWORD=${{vars.MYSQL_PASSWORD}}
+              DEV_DATABASE=${{vars.MYSQL_DATABASE}}
+              DEV_HOST=${{vars.MYSQL_HOST}}
+              DEV_DIALECT=mysql
+              PORT=8080
+              NODE_ENV=production" > /tmp/.env
+              sudo mv /tmp/.env /opt/csye6225/.env
+              sudo systemctl daemon-reload
+              sudo systemctl enable cloud.service
+              sudo systemctl start cloud.service
+            " \
+            --service-account=vm-service-account@clouddev-415518.iam.gserviceaccount.com \
+            --scopes=cloud-platform \
+            --boot-disk-kms-key=${{ vars.VM_KEY_PATH }} \
+            --tags=allow-health-check,http-server,https-server \
 
-      # - name: Create a new Instance Template version with the latest machine image
-      #   run: |
-      #     gcloud compute instance-templates create new-template \
-      #       --instance-template-region=us-east1 \
-      #       --machine-type=e2-standard-2 
-      #       --image=projects/clouddev-415518/global/images/centos-image \
-      #       --region=us-east1 \
-      #       --network=webapp-vc \
-      #       --subnet=webapp \
-      #       --boot-disk-size=100GB \
-      #       --boot-disk-type=pd-balanced \
-      #       --metadata startup-script="#!/bin/bash
-      #         echo "DEV_USERNAME=${{vars.MYSQL_USER}}
-      #         DEV_PASSWORD=${{vars.MYSQL_PASSWORD}}
-      #         DEV_DATABASE=${{vars.MYSQL_DATABASE}}
-      #         DEV_HOST=${{vars.MYSQL_HOST}}
-      #         DEV_DIALECT=mysql
-      #         PORT=8080
-      #         NODE_ENV=production" > /tmp/.env
-      #         sudo mv /tmp/.env /opt/csye6225/.env
-      #         sudo systemctl daemon-reload
-      #         sudo systemctl enable cloud.service
-      #         sudo systemctl start cloud.service
-      #       " \
-      #       --service-account=vm-service-account@clouddev-415518.iam.gserviceaccount.com \
-      #       --scopes=cloud-platform \
-      #       --boot-disk-kms-key=${{ vars.VM_KEY_PATH }} \
-      #       --tags=allow-health-check,http-server,https-server \
+      - name: Configure the managed instance group to use this new template
+        run: |
 
-      # - name: Configure the managed instance group to use this new template
-      #   run: |
+          gcloud compute instance-groups managed set-instance-template instance-group-manager \
+            --template=new-template  \
+            --region=us-east1
 
-      #     gcloud compute instance-groups managed set-instance-template instance-group-manager \
-      #       --template=new-template  \
-      #       --region=us-east1
-
-      
+     
