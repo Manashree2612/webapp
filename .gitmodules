@@ -1,0 +1,6 @@
+[submodule "tf-gcp-infra"]
+	path = tf-gcp-infra
+	url = git@github.com:Manashree2612/tf-gcp-infra.git
+[submodule "serverless"]
+	path = serverless
+	url = git@github.com:Manashree2612/serverless.git
