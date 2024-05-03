@@ -55,7 +55,7 @@ This project demonstrates a comprehensive approach to building and deploying sca
 
 ## Installation
 
-# Prerequisites
+### Prerequisites
 
 Before you begin, ensure you have met the following requirements:
 
@@ -74,9 +74,9 @@ Before you begin, ensure you have met the following requirements:
   - clone the repo 
   - create a .env file with following varibles
   ```
-    DEV_USERNAME=root
-    DEV_PASSWORD=cloud2812
-    DEV_DATABASE=cloud
+    DEV_USERNAME=___
+    DEV_PASSWORD=___
+    DEV_DATABASE=___
     DEV_HOST=127.0.0.1
     DEV_DIALECT=mysql
     PORT=8080
